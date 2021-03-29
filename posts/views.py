@@ -12,7 +12,7 @@ def index(request):
     paginator = Paginator(posts, TEN_POSTS)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    context = {'page': page, 'paginator': paginator}
+    context = {'page': page}
     return render(request, 'index.html', context)
 
 
@@ -22,7 +22,7 @@ def group_posts(request, slug):
     paginator = Paginator(posts, TEN_POSTS)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    context = {'group': group, 'page': page, 'paginator': paginator}
+    context = {'group': group, 'page': page}
     return render(request, 'group.html', context)
 
 
