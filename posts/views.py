@@ -146,7 +146,7 @@ def profile_follow(request, username):
         user = request.user
         following = User.objects.get(username=username)
         if not Follow.objects.filter(user=user, author=following):
-            follow = Follow.objects.create(user=user, author=following)
+            Follow.objects.create(user=user, author=following)
     return redirect('index')
 
 
@@ -154,7 +154,7 @@ def profile_follow(request, username):
 def profile_unfollow(request, username):
     user = request.user
     following = User.objects.get(username=username)
-    unfollow = Follow.objects.get(user=user, author=following).delete()
+    Follow.objects.get(user=user, author=following).delete()
     return redirect('index')
 
 

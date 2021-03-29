@@ -100,27 +100,27 @@ class PostPagesTest(TestCase):
 
     # Тесты системы подписок
     def test_check_profile_follow(self):
-        response = self.authorized_client.get(
+        self.authorized_client.get(
             reverse('profile_follow', args=[PostPagesTest.user]))
         profile_response = self.authorized_client.get(
             reverse('profile', args=[PostPagesTest.user]))
         following = profile_response.context.get('following')
         follow = Follow.objects.get(user=self.user, author=PostPagesTest.user)
         self.assertTrue(following, follow)
-    
+
     def test_check_profile_unfollow(self):
-        response = self.authorized_client.get(
+        self.authorized_client.get(
             reverse('profile_follow', args=[PostPagesTest.user]))
-        profile_unfollow_response = self.authorized_client.get(
+        self.authorized_client.get(
             reverse('profile_unfollow', args=[PostPagesTest.user]))
         profile_response = self.authorized_client.get(
             reverse('profile', args=[PostPagesTest.user]))
         following = profile_response.context.get('following')
         self.assertFalse(following)
-    
+
     def test_following_post_in_follower_menu(self):
         another_user = get_user_model().objects.create_user(username='Ya')
-        response = self.authorized_client.get(
+        self.authorized_client.get(
             reverse('profile_follow', args=[PostPagesTest.user]))
         follow_index_response = self.authorized_client.get(
             reverse('follow_index'))

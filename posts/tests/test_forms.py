@@ -81,7 +81,7 @@ class GroupCreateFormTest(TestCase):
         form_data = {
             'text': 'Вау',
         }
-        response = self.authorized_client.post(
+        self.authorized_client.post(
             reverse('add_comment',
                     args=[user, post_id]),
             data=form_data,
