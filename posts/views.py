@@ -1,15 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django. contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.views.decorators.cache import cache_page
-from django.contrib.auth.models import AnonymousUser
 
 from .models import Post, Group, User, Comment, Follow
 from .forms import PostForm, CommentForm
 from yatube.settings import TEN_POSTS
 
 
-# @cache_page(20)
 def index(request):
     posts = Post.objects.all()
     paginator = Paginator(posts, TEN_POSTS)
@@ -61,7 +58,7 @@ def post_view(request, username, post_id):
     context = {
         'author': post.author,
         'post': post,
-        'comments':comments,
+        'comments': comments,
         'form': form,
         'profile': profile,
         'following': following,
@@ -95,7 +92,8 @@ def post_edit(request, username, post_id):
 
     group = post.group
 
-    form = PostForm(request.POST or None, files=request.FILES or None, instance=post)
+    form = PostForm(
+        request.POST or None, files=request.FILES or None, instance=post)
     if form.is_valid():
         form.save()
         return redirect('post', username=post.author.username, post_id=post.id)
@@ -133,8 +131,14 @@ def follow_index(request):
     page_number = request.GET.get('page')
     paginator = Paginator(posts, TEN_POSTS)
     page = paginator.get_page(page_number)
-    context = {'user': user, 'followings': followings, 'page': page, 'paginator': paginator}
+    context = {
+        'user': user,
+        'followings': followings,
+        'page': page,
+        'paginator': paginator
+    }
     return render(request, "follow.html", context)
+
 
 @login_required
 def profile_follow(request, username):
@@ -144,6 +148,7 @@ def profile_follow(request, username):
         if not Follow.objects.filter(user=user, author=following):
             follow = Follow.objects.create(user=user, author=following)
     return redirect('index')
+
 
 @login_required
 def profile_unfollow(request, username):
@@ -161,6 +166,7 @@ def page_not_found(request, exception):
         {'path': request.path},
         status=404
     )
+
 
 def server_error(request):
     return render(
