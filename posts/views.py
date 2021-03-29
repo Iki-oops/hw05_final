@@ -29,7 +29,7 @@ def group_posts(request, slug):
 def profile(request, username):
     profile = get_object_or_404(User, username=username)
     profile_posts = profile.posts.all()
-    # paginator = Paginator(profile_posts, TEN_POSTS)
+    paginator = Paginator(profile_posts, TEN_POSTS)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     following = profile.following.filter(user__username=request.user)
