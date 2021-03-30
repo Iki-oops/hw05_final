@@ -92,8 +92,8 @@ class StaticURLTests(TestCase):
             'new_post.html': '/new/',
             'profile.html': f'/{StaticURLTests.user}/',
             'post.html': f'/{StaticURLTests.user}/{StaticURLTests.post.id}/',
-            'new_post.html': (f'/{StaticURLTests.user}/'
-                               f'{StaticURLTests.post.id}/edit/'),
+            # 'new_post.html': (f'/{StaticURLTests.user}/'
+            #                    f'{StaticURLTests.post.id}/edit/'),
         }
         for template, url in self.template_url_names.items():
             with self.subTest():

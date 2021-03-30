@@ -7,7 +7,8 @@ from django.urls import reverse
 from posts.models import Group, Post, Follow
 
 
-class PostPagesTest(TestCase): # Я же не создавал здесь временную директорию для медиа-файлов
+# Я же не создавал здесь временную директорию для медиа-файлов
+class PostPagesTest(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()

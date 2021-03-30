@@ -37,14 +37,14 @@ def profile(request, username):
         'posts': profile_posts,
         'page': page,
         'profile': profile,
-        # 'profile_posts': profile_posts,
         'profile': profile,
         'following': following,
     }
     return render(request, 'profile.html', context)
 
 
-def post_view(request, username, post_id): # Как это сделать, если без них у меня комментарий не работает
+# Как это сделать, если без них у меня комментарий не работает
+def post_view(request, username, post_id):
     profile = get_object_or_404(User, username=username)
     post = get_object_or_404(Post, author__username=username, id=post_id)
     posts = profile.posts.all()
@@ -134,8 +134,8 @@ def profile_follow(request, username):
     user = request.user
     following = get_object_or_404(User, username=username)
     if (not Follow.objects.filter(user=user, author=following).exists()
-        and request.user.username != username):
-            Follow.objects.create(user=user, author=following)
+            and request.user.username != username):
+        Follow.objects.create(user=user, author=following)
     return redirect('profile', username)
 
 
