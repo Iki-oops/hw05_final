@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 
@@ -41,7 +43,7 @@ class StaticURLTests(TestCase):
         for value in urls.values():
             with self.subTest(value=value):
                 response = self.authorized_client.get(value)
-                self.assertEquals(response.status_code, 200)
+                self.assertEquals(response.status_code, HTTPStatus.OK)
 
     def test_url_anonymous(self):
         available_urls = {
@@ -53,7 +55,7 @@ class StaticURLTests(TestCase):
         for value in available_urls.values():
             with self.subTest(value=value):
                 response = self.guest_client.get(value)
-                self.assertEquals(response.status_code, 200)
+                self.assertEquals(response.status_code, HTTPStatus.OK)
 
     def test_url_author_post(self):
         available_urls = {
@@ -68,7 +70,7 @@ class StaticURLTests(TestCase):
         for value in available_urls.values():
             with self.subTest(value=value):
                 response = self.author_post_client.get(value)
-                self.assertEquals(response.status_code, 200)
+                self.assertEquals(response.status_code, HTTPStatus.OK)
 
     def test_url_not_author_post(self):
         available_urls = {
@@ -81,7 +83,7 @@ class StaticURLTests(TestCase):
         for value in available_urls.values():
             with self.subTest(value=value):
                 response = self.authorized_client.get(value)
-                self.assertEquals(response.status_code, 200)
+                self.assertEquals(response.status_code, HTTPStatus.OK)
 
     def test_urls_uses_correct_template(self):
         self.template_url_names = {
@@ -90,7 +92,7 @@ class StaticURLTests(TestCase):
             'new_post.html': '/new/',
             'profile.html': f'/{StaticURLTests.user}/',
             'post.html': f'/{StaticURLTests.user}/{StaticURLTests.post.id}/',
-            'post_edit.html': (f'/{StaticURLTests.user}/'
+            'new_post.html': (f'/{StaticURLTests.user}/'
                                f'{StaticURLTests.post.id}/edit/'),
         }
         for template, url in self.template_url_names.items():

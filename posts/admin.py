@@ -16,6 +16,7 @@ class GroupAdmin(admin.ModelAdmin):
     list_display_links = ('pk', 'title', 'slug', 'description')
     search_fields = ('title',)
     list_filter = ('slug',)
+    prepopulated_fields = {"slug": ("title",)}
 
 
 class CommentAdmin(admin.ModelAdmin):

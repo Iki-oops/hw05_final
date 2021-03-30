@@ -1,3 +1,7 @@
+import shutil
+import tempfile
+
+from django.conf import settings
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -10,6 +14,7 @@ class GroupCreateFormTest(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        settings.MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
         cls.user = get_user_model().objects.create_user(username='Ya')
         cls.group = Group.objects.create(
             title='Yo-Yo',
@@ -23,6 +28,11 @@ class GroupCreateFormTest(TestCase):
         )
         cls.form = PostForm()
         cls.comment_form = CommentForm()
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(settings.MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
 
     def setUp(self):
         self.guest_client = Client()
@@ -82,7 +92,7 @@ class GroupCreateFormTest(TestCase):
             'text': 'Вау',
         }
         self.authorized_client.post(
-            reverse('add_comment',
+            reverse('post',
                     args=[user, post_id]),
             data=form_data,
         )
