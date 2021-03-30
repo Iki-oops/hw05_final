@@ -77,8 +77,7 @@ def add_comment(request, username, post_id):
         comment.author = request.user
         comment.post = post
         comment.save()
-    # Выходит ошибка в pytest-е без HttpResponse object
-    return redirect('index')
+    return redirect('post', username, post_id)
 
 
 @login_required
