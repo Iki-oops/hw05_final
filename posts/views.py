@@ -37,18 +37,14 @@ def profile(request, username):
         'posts': profile_posts,
         'page': page,
         'profile': profile,
-        'profile': profile,
         'following': following,
     }
     return render(request, 'profile.html', context)
 
 
-# Как это сделать, если без них у меня комментарий не работает
 def post_view(request, username, post_id):
     profile = get_object_or_404(User, username=username)
     post = get_object_or_404(Post, author__username=username, id=post_id)
-    posts = profile.posts.all()
-    comments = Comment.objects.filter(post__id=post_id)
     following = profile.following.filter(user__username=request.user)
     form = CommentForm(request.POST or None)
     if form.is_valid():
@@ -57,10 +53,7 @@ def post_view(request, username, post_id):
         comment.post = post
         comment.save()
     context = {
-        'author': post.author,
         'post': post,
-        'posts': posts,
-        'comments': comments,
         'form': form,
         'profile': profile,
         'following': following,
@@ -83,16 +76,18 @@ def add_comment(request, username, post_id):
 @login_required
 def post_edit(request, username, post_id):
     post = get_object_or_404(Post, author__username=username, id=post_id)
-    # А зачем удостоверяться, что текущий юзер не автор поста
+    if request.user.username != username:
+        return redirect('post', username=username, post_id=post.id)
     form = PostForm(
         request.POST or None, files=request.FILES or None, instance=post)
     if form.is_valid():
         form.save()
         return redirect('post', username=username, post_id=post.id)
-
+    is_edit = True
     context = {
         'post': post,
-        'form': form
+        'form': form,
+        'is_edit': is_edit,
     }
     return render(request, 'new_post.html', context)
 
@@ -100,7 +95,6 @@ def post_edit(request, username, post_id):
 @login_required
 def new_post(request):
     form = PostForm(request.POST or None, files=request.FILES or None)
-    # if request.method == 'POST': Появляются ошибки в pytest-е
     if form.is_valid():
         post = form.save(commit=False)
         post.author = request.user
@@ -115,7 +109,7 @@ def new_post(request):
 @login_required
 def follow_index(request):
     user = request.user
-    followings = user.follower.all()
+    followings = Follow.objects.filter(user=user).select_related('author').all()
     posts = []
     if followings:
         for following in followings:
@@ -144,8 +138,9 @@ def profile_follow(request, username):
 def profile_unfollow(request, username):
     user = request.user
     following = get_object_or_404(User, username=username)
-    if Follow.objects.filter(user=user, author=following).exists():
-        Follow.objects.filter(user=user, author=following).delete()
+    follow = Follow.objects.filter(user=user, author=following)
+    if follow.exists():
+        follow.delete()
     return redirect('profile', username)
 
 

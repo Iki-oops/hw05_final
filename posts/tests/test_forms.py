@@ -2,12 +2,23 @@ import shutil
 import tempfile
 
 from django.conf import settings
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 from posts.forms import PostForm, CommentForm
 from posts.models import Group, Post, Comment
+
+
+SMALL_GIF = (
+            b'\x47\x49\x46\x38\x39\x61\x02\x00'
+            b'\x01\x00\x80\x00\x00\x00\x00\x00'
+            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
+            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
+            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
+            b'\x0A\x00\x3B'
+)
 
 
 class GroupCreateFormTest(TestCase):
@@ -52,9 +63,15 @@ class GroupCreateFormTest(TestCase):
     def test_create_post(self):
         posts_count = Post.objects.count()
         group = GroupCreateFormTest.group
+        uploaded = SimpleUploadedFile(
+            name='small.gif',
+            content=SMALL_GIF,
+            content_type='image/gif'
+        )
         form_data = {
             'group': group.id,
             'text': 'Yo-Yo test',
+            'image': uploaded,
         }
         response = self.authorized_client.post(
             reverse('new_post'),
@@ -71,9 +88,15 @@ class GroupCreateFormTest(TestCase):
         post = GroupCreateFormTest.post
         group = GroupCreateFormTest.group
         user = GroupCreateFormTest.user
+        uploaded = SimpleUploadedFile(
+            name='small.gif',
+            content=SMALL_GIF,
+            content_type='image/gif'
+        )
         form_data = {
             'group': group.id,
             'text': 'Ya',
+            'image': uploaded,
         }
         response = self.authorized_client.post(
             reverse(
@@ -97,3 +120,19 @@ class GroupCreateFormTest(TestCase):
             data=form_data,
         )
         self.assertEqual(Comment.objects.last().text, 'Вау')
+
+    # def test_anonymous_can_not_comment(self):
+    #     post_id = GroupCreateFormTest.post.id
+    #     user = GroupCreateFormTest.user
+    #     form_data = {
+    #         'text': 'Вау',
+    #     }
+    #     self.guest_client.post(
+    #         reverse('post',
+    #                 args=[user, post_id]),
+    #         data=form_data,
+    #     )
+    #     self.assertFalse(Comment.objects.last().text, 'Вау')
+        # self.assertFormError(
+        #     response, 'form', 'slug', 'first уже существует'
+        # )

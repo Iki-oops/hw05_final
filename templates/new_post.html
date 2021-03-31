@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
-{% block title %}Редактирование или добавление нового поста{% endblock %}
+{% block title %}
+  {% if is_edit %}Редактировать{% else %}Добавить{% endif %} пост
+{% endblock %}
 {% block content %}
 {% load user_filters %}
 
@@ -42,7 +44,7 @@
         {% endfor %}
           <div class="col-md-6 offset-md-4">
             <button type="submit" class="btn btn-primary">
-              Изменить или сохранить пост
+              {% if is_edit %}Изменить{% else %}Сохранить{% endif %} пост
             </button>
           </div>
         </form>

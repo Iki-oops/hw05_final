@@ -11,7 +11,7 @@
 
     <div class="col-md-9">
         {% include 'includes/post_item.html' %}
-        {% include 'includes/comments.html' %}
+        {% include 'includes/comments.html' with comments=post.comments.all %}
       </div>
     </div>
   </div>

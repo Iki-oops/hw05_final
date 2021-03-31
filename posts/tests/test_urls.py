@@ -37,8 +37,6 @@ class StaticURLTests(TestCase):
             'new_post': '/new/',
             'profile': f'/{StaticURLTests.user}/',
             'post': f'/{StaticURLTests.user}/{StaticURLTests.post.id}/',
-            'post_edit': (f'/{StaticURLTests.user}/'
-                          f'{StaticURLTests.post.id}/edit/'),
         }
         for value in urls.values():
             with self.subTest(value=value):
