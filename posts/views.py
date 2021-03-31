@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django. contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 
-from .models import Post, Group, User, Comment, Follow
+from .models import Post, Group, User, Follow
 from .forms import PostForm, CommentForm
 from yatube.settings import TEN_POSTS
 
@@ -109,7 +109,8 @@ def new_post(request):
 @login_required
 def follow_index(request):
     user = request.user
-    followings = Follow.objects.filter(user=user).select_related('author').all()
+    followings = Follow.objects.filter(
+        user=user).select_related('author').all()
     posts = []
     if followings:
         for following in followings:
